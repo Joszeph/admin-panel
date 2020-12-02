@@ -4,12 +4,13 @@ const Admin = require('../models/admin');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
-
+//Generating Token
 const generateToken = data => {
     const token = jwt.sign(data, config.privateKey);
     return token;
 }
 
+//Veryfing users data with the Database
 const verifyUser = async (req, res) => {
     const { username, password } = req.body;
     const user = await Admin.findOne( { username }); 
@@ -26,30 +27,32 @@ const verifyUser = async (req, res) => {
     return status; 
 };
 
-const getUserStatus =  (req, res, next) => {
-    const token = req.cookies['aid'];
-    if(!token) {
-        req.isLoggedIn = false;
-    }
+// const getUserStatus =  (req, res, next) => {
+//     const token = req.cookies['aid'];
+//     if(!token) {
+//         req.isLoggedIn = false;
+//     }
 
-    try { 
-        jwt.verify(token, config.privateKey); 
-        req.isLoggedIn = true;
-    } catch(e) {
-        req.isLoggedIn = false;
-    }
-    next();
-
-};
-
-// const checkAccess = (req, res, next)=> {
-//     const token = req.cookies['aid']; 
-//     if(token) {
-//         return res.redirect('/admin-panel');
+//     try { 
+//         jwt.verify(token, config.privateKey); 
+//         req.isLoggedIn = true;
+//     } catch(e) {
+//         req.isLoggedIn = false;
 //     }
 //     next();
+
 // };
 
+//Checking if the user is logget and have a token
+const checkAccess = (req, res, next)=> {
+    const token = req.cookies['aid']; 
+    if(token) {
+        return res.redirect('/admin-panel');
+    }
+    next();
+};
+
+//Finding and checking user Authentication
 const checkAuthentication = async (req, res, next) => {
     const token = req.cookies['aid'];
     if(!token) {
@@ -67,9 +70,10 @@ const checkAuthentication = async (req, res, next) => {
 
 };
 
+
 module.exports = {
     verifyUser,
-    // checkAccess,
+    checkAccess,
     checkAuthentication,
-    getUserStatus
+   //getUserStatus
 };

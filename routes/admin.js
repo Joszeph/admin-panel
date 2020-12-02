@@ -1,5 +1,5 @@
 const {Router}=require('express');
-const{checkAccess,checkAuthentication}= require('../controllers/admin');
+const{checkAuthentication}= require('../controllers/admin');
 const route = Router();
 
 route.get('/admin-panel', checkAuthentication, (req, res)=>{

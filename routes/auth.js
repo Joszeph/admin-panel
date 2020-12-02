@@ -1,16 +1,18 @@
 const {Router}=require('express');
 const { validationResult } = require('express-validator');
-const {verifyUser,getUserStatus}=require('../controllers/admin');
+const {verifyUser,checkAccess}=require('../controllers/admin');
+
 
 
 const router = Router();
 
-router.get('/admin', getUserStatus,(req,res) => {
+router.get('/admin', checkAccess, (req,res) => {
     res.render('login', {
     layout:'main-admin.hbs',
     title: 'Login Admin Page',
-    isLoggedIn: req.isLoggetIn
+    
 })
+
 });
 
 router.post('/admin',  async (req, res)=>{
