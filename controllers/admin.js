@@ -70,10 +70,37 @@ const checkAuthentication = async (req, res, next) => {
 
 };
 
+//Registering an Admin
+
+const saveUser = async (req, res)=>{
+    const{username, password}=req.body;
+    const salt = await bcrypt.genSalt(10);
+    const hash = await bcrypt.hash(password, salt);
+
+    const user = new Admin({
+        username,
+        password:hash,
+    });
+
+    try{
+        const userObject = await user.save();
+        const token = generateToken({
+            userID: userObject._id,
+            username:userObject.username
+        })
+        res.cookie('aid', token);
+        return true;
+    }catch(err){
+        console.error(err);
+        return res.redirect('/register');
+    }
+}
+
 
 module.exports = {
     verifyUser,
     checkAccess,
     checkAuthentication,
+    saveUser
    //getUserStatus
 };
